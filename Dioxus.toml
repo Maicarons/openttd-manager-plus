@@ -1,0 +1,40 @@
+[application]
+name = "OpenTTD Manager Plus"
+default_platform = "desktop"
+
+[web]
+title = "OpenTTD Manager Plus"
+base_path = "/"
+
+[desktop]
+# Native window configuration (Blitz/WGPU renderer)
+width = 1200
+height = 800
+resizable = true
+min_width = 800
+min_height = 600
+title = "OpenTTD Manager Plus"
+
+[mobile]
+# Android-specific
+android_manifest = "android/AndroidManifest.xml"
+android_icon = "assets/icon.png"
+
+# iOS-specific
+ios_info_plist = "ios/Info.plist"
+ios_icon = "assets/icon_ios.png"
+
+# Permissions
+[[mobile.android.permissions]]
+name = "android.permission.INTERNET"
+
+[[mobile.android.permissions]]
+name = "android.permission.WRITE_EXTERNAL_STORAGE"
+max_sdk_version = 32
+
+[[mobile.android.permissions]]
+name = "android.permission.REQUEST_INSTALL_PACKAGES"
+
+[[mobile.ios.permissions]]
+name = "INTERNET"
+reason = "Download OpenTTD versions and resources"

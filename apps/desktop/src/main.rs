@@ -1,0 +1,15 @@
+//! OpenTTD Manager Plus - Desktop Application
+//!
+//! Cross-platform desktop launcher for Windows, Linux, and macOS.
+//! Built with Dioxus Native — Blitz/WGPU renderer (no WebView).
+
+mod app;
+mod components;
+mod pages;
+mod utils;
+
+fn main() {
+    dioxus_logger::init(dioxus_logger::tracing::Level::INFO).expect("Failed to initialize logger");
+    log::info!("Starting OpenTTD Manager Plus Desktop (Native Renderer)");
+    dioxus_native::launch(app::App);
+}
