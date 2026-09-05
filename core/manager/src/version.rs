@@ -115,3 +115,62 @@ pub struct VersionInfo {
     /// Whether this is a pre-release version.
     pub is_prerelease: bool,
 }
+
+/// Types of mods available on BaNaNaS.
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum ModType {
+    /// NewGRF graphics / gameplay mods.
+    NewGRF,
+    /// AI (computer opponent) scripts.
+    AI,
+    /// GameScripts (gameplay modification scripts).
+    GameScript,
+    /// Music replacement sets.
+    MusicSet,
+}
+
+impl std::fmt::Display for ModType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ModType::NewGRF => write!(f, "newgrf"),
+            ModType::AI => write!(f, "ai"),
+            ModType::GameScript => write!(f, "gamescript"),
+            ModType::MusicSet => write!(f, "music"),
+        }
+    }
+}
+
+/// A mod/item from the BaNaNaS API.
+///
+/// Represents a downloadable content item available on OpenTTD's
+/// online content service, including its metadata, version, and
+/// download URL.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ModInfo {
+    /// Unique content identifier (e.g. `"424f4f54"`).
+    pub id: String,
+    /// Display name of the mod.
+    pub name: String,
+    /// Version string (e.g. `"1.0.0"`).
+    pub version: String,
+    /// The type of mod (NewGRF, AI, GameScript, or MusicSet).
+    pub mod_type: ModType,
+    /// Author/uploader name.
+    pub author: String,
+    /// Short description of the mod.
+    pub description: String,
+    /// URL to the mod's web page, if available.
+    pub url: Option<String>,
+    /// Category label (e.g. `"transport"`, `"industry"`), if available.
+    pub category: Option<String>,
+    /// Compatibility info (e.g. `"1.10.0"` or `"any"`), if available.
+    pub compatibility: Option<String>,
+    /// Direct download URL for the mod file, if available.
+    pub download_url: Option<String>,
+    /// File size in bytes, if known.
+    pub filesize: Option<u64>,
+    /// Date the mod was first published, if known.
+    pub created_at: Option<chrono::NaiveDateTime>,
+    /// Date the mod was last updated, if known.
+    pub updated_at: Option<chrono::NaiveDateTime>,
+}

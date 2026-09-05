@@ -6,6 +6,7 @@
 mod app;
 mod components;
 mod pages;
+mod state;
 mod utils;
 
 fn main() {

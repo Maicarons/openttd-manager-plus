@@ -6,7 +6,11 @@
 /// Re-export public modules
 pub mod engine;
 pub mod mirror;
+pub mod queue;
 pub mod verify;
+
+/// Re-export key types from queue module
+pub use queue::{DownloadQueue, DownloadTask, Priority, QueueStats, TaskStatus};
 
 #[cfg(test)]
 #[path = "tests.rs"]
@@ -38,4 +42,7 @@ pub enum Error {
 
     #[error("HTTP error: {status} {message}")]
     HttpError { status: reqwest::StatusCode, message: String },
+
+    #[error("Task not found: {0}")]
+    TaskNotFound(String),
 }

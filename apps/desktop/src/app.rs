@@ -3,10 +3,21 @@
 use dioxus_native::prelude::*;
 use crate::components::*;
 use crate::pages::*;
+use crate::state::AppState;
 
 #[component]
 pub fn App() -> Element {
     let mut page = use_signal(|| Page::Home);
+    let mut state = AppState::new();
+
+    // Provide AppState to all child components
+    use_context_provider(|| state.clone());
+
+    // Load instances and profiles on startup
+    use_effect(move || {
+        state.load_instances();
+        state.load_profiles();
+    });
 
     rsx! {
         div {

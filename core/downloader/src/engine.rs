@@ -13,7 +13,7 @@ use tokio::io::AsyncWriteExt;
 use tokio::time::sleep;
 
 /// Download progress callback
-pub type ProgressCallback = Box<dyn Fn(DownloadProgress) + Send + 'static>;
+pub type ProgressCallback = Arc<dyn Fn(DownloadProgress) + Send + Sync + 'static>;
 
 /// Download progress information reported to the callback.
 #[derive(Debug, Clone)]
@@ -60,6 +60,7 @@ impl Default for DownloadConfig {
 
 /// Core download engine providing streaming downloads with progress
 /// tracking, resume support, and retry logic.
+#[derive(Clone)]
 pub struct DownloadEngine {
     config: DownloadConfig,
     client: Client,
@@ -161,7 +162,7 @@ impl DownloadEngine {
             }
 
             match self
-                .download_inner(url, destination, &progress, resumable, attempt)
+                .download_inner(url, destination, progress.clone(), resumable, attempt)
                 .await
             {
                 Ok(()) => return Ok(()),
@@ -185,7 +186,7 @@ impl DownloadEngine {
         &self,
         url: &str,
         destination: &Path,
-        progress: &Option<ProgressCallback>,
+        progress: Option<ProgressCallback>,
         resumable: bool,
         _attempt: u32,
     ) -> Result<()> {

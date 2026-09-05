@@ -28,5 +28,7 @@ pub trait VersionFetcher: Send + Sync {
     fn name(&self) -> &'static str;
 }
 
+pub mod bananas;
+pub mod cmclient;
 pub mod official;
 pub mod jgrpp;

@@ -263,7 +263,7 @@ async fn test_progress_callback_invocation() {
     let called = Arc::new(AtomicBool::new(false));
     let called_clone = called.clone();
 
-    let cb: ProgressCallback = Box::new(move |progress| {
+    let cb: ProgressCallback = Arc::new(move |progress: DownloadProgress| {
         called_clone.store(true, Ordering::SeqCst);
         assert!(progress.bytes_downloaded > 0 || progress.speed == 0.0);
     });
@@ -281,7 +281,7 @@ async fn test_progress_callback_invocation() {
 
 #[tokio::test]
 async fn test_progress_callback_does_not_panic_on_drop() {
-    let cb: ProgressCallback = Box::new(move |_progress| {
+    let cb: ProgressCallback = Arc::new(move |_progress: DownloadProgress| {
         // No-op
     });
 
@@ -431,7 +431,7 @@ mod mock_http_tests {
 
         let progress_called = Arc::new(AtomicBool::new(false));
         let pc = progress_called.clone();
-        let cb: ProgressCallback = Box::new(move |p| {
+        let cb: ProgressCallback = Arc::new(move |p: DownloadProgress| {
             pc.store(true, Ordering::SeqCst);
             assert!(p.bytes_downloaded > 0);
         });
