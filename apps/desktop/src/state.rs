@@ -1,13 +1,15 @@
-﻿//! Application state management using Dioxus signals.
+//! Application state management using Dioxus signals.
 
 use dioxus_native::prelude::*;
 use otmp_core_manager::source::official::OfficialFetcher;
 use otmp_core_manager::source::jgrpp::JgrppFetcher;
+use otmp_core_manager::source::cmclient::CmClientFetcher;
 use otmp_core_manager::source::VersionFetcher;
 use otmp_core_manager::version::{VersionInfo, VersionSource};
 use otmp_core_config::instance::{Instance, InstanceManager};
 use otmp_core_config::profile::Profile;
 use otmp_core_config::profile::ProfileManager;
+use otmp_core_config::save::{SaveInfo, SaveManager};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -35,6 +37,7 @@ pub struct AppState {
     pub error: Signal<Option<String>>,
     pub instances: Signal<Vec<Instance>>,
     pub profiles: Signal<Vec<Profile>>,
+    pub saves: Signal<Vec<SaveInfo>>,
     pub download_queue: Signal<Vec<DownloadTask>>,
     pub download_stats: Signal<QueueStats>,
     pub data_dir: Signal<PathBuf>,
@@ -51,12 +54,14 @@ impl AppState {
             error: Signal::new(None),
             instances: Signal::new(Vec::new()),
             profiles: Signal::new(Vec::new()),
+            saves: Signal::new(Vec::new()),
             download_queue: Signal::new(Vec::new()),
             download_stats: Signal::new(QueueStats::default()),
             data_dir: Signal::new(data_dir),
         }
     }
 
+    /// Fetch versions from all configured sources.
     pub async fn fetch_versions(&self) {
         let mut loading = self.loading;
         let mut error = self.error;
@@ -68,16 +73,27 @@ impl AppState {
         let mut all_versions: Vec<VersionInfo> = Vec::new();
         let mut errors: Vec<String> = Vec::new();
 
+        // Official OpenTTD
         let official = OfficialFetcher::new();
         match official.fetch_versions().await {
             Ok(v) => { log::info!("Fetched {} official versions", v.len()); all_versions.extend(v); }
             Err(e) => errors.push(format!("Official: {e}")),
         }
+
+        // JGRPP
         let jgrpp = JgrppFetcher::new();
         match jgrpp.fetch_versions().await {
             Ok(v) => { log::info!("Fetched {} JGRPP versions", v.len()); all_versions.extend(v); }
             Err(e) => errors.push(format!("JGRPP: {e}")),
         }
+
+        // CMClient
+        let cmclient = CmClientFetcher::new();
+        match cmclient.fetch_versions().await {
+            Ok(v) => { log::info!("Fetched {} CMClient versions", v.len()); all_versions.extend(v); }
+            Err(e) => errors.push(format!("CMClient: {e}")),
+        }
+
         all_versions.sort_by(|a, b| b.version.cmp(&a.version));
         versions.set(all_versions);
         if !errors.is_empty() {
@@ -118,6 +134,14 @@ impl AppState {
         let mut manager = ProfileManager::new(data_dir);
         if let Err(e) = manager.load() { log::error!("Failed to load profiles: {e}"); }
         profiles.set(manager.list().to_vec());
+    }
+
+    pub fn load_saves(&mut self) {
+        let mut saves = self.saves;
+        let data_dir = self.data_dir.read().clone();
+        let mut manager = SaveManager::new(data_dir);
+        if let Err(e) = manager.scan() { log::error!("Failed to scan saves: {e}"); }
+        saves.set(manager.list().to_vec());
     }
 
     pub fn refresh_downloads(&mut self) {

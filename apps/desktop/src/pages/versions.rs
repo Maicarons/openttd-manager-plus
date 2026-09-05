@@ -1,4 +1,4 @@
-﻿//! Version management page — list, filter, and download OpenTTD versions.
+//! Version management page — list, filter, and download OpenTTD versions.
 
 use dioxus_native::prelude::*;
 use crate::state::AppState;
@@ -58,9 +58,75 @@ pub fn VersionsPage() -> Element {
     let loading_sig = state.loading;
     let error_sig = state.error;
     let versions_sig = state.versions;
+    let filtered_sig = state.filtered_versions;
 
+    // Fetch versions on first render via async spawn
     use_effect(move || {
         if versions_sig.read().is_empty() {
+            let mut l = loading_sig;
+            let mut e = error_sig;
+            let mut v = versions_sig;
+            let mut f = filtered_sig;
+            spawn(async move {
+                l.set(true);
+                e.set(None);
+                // In production, this would call OfficialFetcher/JgrppFetcher/CmClientFetcher
+                // For now, we populate with placeholder data to show the UI works
+                use otmp_core_manager::version::VersionInfo;
+                use otmp_core_manager::version::VersionType;
+                use otmp_core_manager::version::VersionSource;
+                let placeholder: Vec<VersionInfo> = vec![
+                    VersionInfo {
+                        id: uuid::Uuid::new_v4(),
+                        source: VersionSource::Official,
+                        version: semver::Version::parse("14.1.0").unwrap(),
+                        version_type: VersionType::Stable,
+                        name: "OpenTTD".to_string(),
+                        release_date: Some(chrono::NaiveDateTime::parse_from_str("2024-06-01 00:00:00", "%Y-%m-%d %H:%M:%S").unwrap()),
+                        downloads: vec![],
+                        changelog: None,
+                        is_prerelease: false,
+                    },
+                    VersionInfo {
+                        id: uuid::Uuid::new_v4(),
+                        source: VersionSource::Official,
+                        version: semver::Version::parse("14.0.0").unwrap(),
+                        version_type: VersionType::Stable,
+                        name: "OpenTTD".to_string(),
+                        release_date: Some(chrono::NaiveDateTime::parse_from_str("2024-03-15 00:00:00", "%Y-%m-%d %H:%M:%S").unwrap()),
+                        downloads: vec![],
+                        changelog: None,
+                        is_prerelease: false,
+                    },
+                    VersionInfo {
+                        id: uuid::Uuid::new_v4(),
+                        source: VersionSource::Jgrpp,
+                        version: semver::Version::parse("0.59.1").unwrap(),
+                        version_type: VersionType::Stable,
+                        name: "JGRPP".to_string(),
+                        release_date: Some(chrono::NaiveDateTime::parse_from_str("2024-05-20 00:00:00", "%Y-%m-%d %H:%M:%S").unwrap()),
+                        downloads: vec![],
+                        changelog: None,
+                        is_prerelease: false,
+                    },
+                    VersionInfo {
+                        id: uuid::Uuid::new_v4(),
+                        source: VersionSource::CmClient,
+                        version: semver::Version::parse("1.0.0").unwrap(),
+                        version_type: VersionType::Stable,
+                        name: "CMClient".to_string(),
+                        release_date: Some(chrono::NaiveDateTime::parse_from_str("2024-04-10 00:00:00", "%Y-%m-%d %H:%M:%S").unwrap()),
+                        downloads: vec![],
+                        changelog: None,
+                        is_prerelease: false,
+                    },
+                ];
+                v.set(placeholder);
+                // Apply initial filter
+                let all = v.read().clone();
+                f.set(all);
+                l.set(false);
+            });
         }
     });
 

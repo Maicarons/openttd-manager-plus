@@ -42,6 +42,7 @@ pub fn App() -> Element {
                         Page::Downloads => rsx! { DownloadsPage {} },
                         Page::Configs => rsx! { ConfigsPage {} },
                         Page::Mods => rsx! { ModsPage {} },
+                        Page::Saves => rsx! { SavesPage {} },
                         Page::Settings => rsx! { SettingsPage {} },
                     }
                 }

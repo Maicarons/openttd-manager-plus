@@ -5,6 +5,7 @@ pub mod versions;
 pub mod downloads;
 pub mod configs;
 pub mod mods;
+pub mod saves;
 pub mod settings;
 
 pub use home::HomePage;
@@ -12,6 +13,7 @@ pub use versions::VersionsPage;
 pub use downloads::DownloadsPage;
 pub use configs::ConfigsPage;
 pub use mods::ModsPage;
+pub use saves::SavesPage;
 pub use settings::SettingsPage;
 
 /// Enum of all pages in the application
@@ -22,6 +24,7 @@ pub enum Page {
     Downloads,
     Configs,
     Mods,
+    Saves,
     Settings,
 }
 
@@ -34,6 +37,7 @@ impl Page {
             Page::Downloads => "Download Manager",
             Page::Configs => "Configuration",
             Page::Mods => "Mod Management",
+            Page::Saves => "Save Management",
             Page::Settings => "Settings",
         }
     }

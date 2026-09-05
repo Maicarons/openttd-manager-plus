@@ -11,6 +11,7 @@ pub fn Sidebar(current_page: Page, on_navigate: EventHandler<Page>) -> Element {
         (Page::Downloads, "⬇️", "Downloads"),
         (Page::Configs, "🔧", "Configs"),
         (Page::Mods, "🎨", "Mods"),
+        (Page::Saves, "🗺️", "Saves"),
         (Page::Settings, "⚙️", "Settings"),
     ];
 
