@@ -1,0 +1,83 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [created]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-desktop:
+    name: Build Desktop (${{ matrix.os }})
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact_name: otmp-desktop-linux
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact_name: otmp-desktop-windows.exe
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact_name: otmp-desktop-macos
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+      - name: Install Dioxus CLI
+        run: curl -fsSL https://dioxuslabs.com/install.sh | bash
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+      - name: Build
+        run: dx build --platform desktop --release
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: target/desktop/release/openttd-manager-plus*
+
+  build-mobile:
+    name: Build Mobile (${{ matrix.platform }})
+    strategy:
+      matrix:
+        platform: [android, ios]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Install Dioxus CLI
+        run: curl -fsSL https://dioxuslabs.com/install.sh | bash
+      - name: Add targets
+        run: |
+          rustup target add aarch64-linux-android
+          rustup target add aarch64-apple-ios
+      - name: Build ${{ matrix.platform }}
+        run: dx build --platform ${{ matrix.platform }} --release
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: otmp-mobile-${{ matrix.platform }}
+          path: target/${{ matrix.platform }}/release/*
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Run tests
+        run: cargo test --workspace

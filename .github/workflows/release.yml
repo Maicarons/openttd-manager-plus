@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  release-desktop:
+    name: Release Desktop (${{ matrix.os }})
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            bundle_format: appimage
+            artifact_ext: .AppImage
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            bundle_format: msi
+            artifact_ext: .msi
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            bundle_format: dmg
+            artifact_ext: .dmg
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+      - name: Install Dioxus CLI
+        run: curl -fsSL https://dioxuslabs.com/install.sh | bash
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+      - name: Bundle ${{ matrix.bundle_format }}
+        run: dx bundle --platform desktop --release
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/desktop/release/openttd-manager-plus*${{ matrix.artifact_ext }}
+
+  release-mobile:
+    name: Release Mobile
+    strategy:
+      matrix:
+        platform: [android, ios]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Install Dioxus CLI
+        run: curl -fsSL https://dioxuslabs.com/install.sh | bash
+      - name: Add targets
+        run: |
+          rustup target add aarch64-linux-android
+          rustup target add aarch64-apple-ios
+      - name: Bundle ${{ matrix.platform }}
+        run: dx bundle --platform ${{ matrix.platform }} --release
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/${{ matrix.platform }}/release/*.apk
+        if: matrix.platform == 'android'
+      - name: Upload iOS release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/${{ matrix.platform }}/release/*.ipa
+        if: matrix.platform == 'ios'
