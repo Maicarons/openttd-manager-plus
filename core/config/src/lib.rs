@@ -5,8 +5,10 @@
 
 pub mod config_file;
 pub mod instance;
+pub mod perf;
 pub mod profile;
 pub mod save;
+pub mod security;
 
 /// Result type alias for the config crate
 pub type Result<T> = std::result::Result<T, Error>;

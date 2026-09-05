@@ -68,3 +68,6 @@ parking_lot = "0.12"
 
 # UUID
 uuid = { version = "1", features = ["v4", "serde"] }
+
+# URL parsing
+url = "2"

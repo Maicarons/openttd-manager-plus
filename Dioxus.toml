@@ -17,24 +17,41 @@ title = "OpenTTD Manager Plus"
 
 [mobile]
 # Android-specific
-android_manifest = "android/AndroidManifest.xml"
-android_icon = "assets/icon.png"
+android_manifest = "platform/android/AndroidManifest.xml"
+android_icon = "platform/android/icon.png"
+android_label = "OpenTTD Manager Plus"
 
 # iOS-specific
-ios_info_plist = "ios/Info.plist"
-ios_icon = "assets/icon_ios.png"
+ios_info_plist = "platform/ios/Info.plist"
+ios_icon = "platform/ios/icon.png"
+ios_label = "OpenTTD Manager Plus"
 
-# Permissions
+# Android permissions
 [[mobile.android.permissions]]
 name = "android.permission.INTERNET"
+
+[[mobile.android.permissions]]
+name = "android.permission.ACCESS_NETWORK_STATE"
 
 [[mobile.android.permissions]]
 name = "android.permission.WRITE_EXTERNAL_STORAGE"
 max_sdk_version = 32
 
 [[mobile.android.permissions]]
+name = "android.permission.READ_EXTERNAL_STORAGE"
+max_sdk_version = 32
+
+[[mobile.android.permissions]]
 name = "android.permission.REQUEST_INSTALL_PACKAGES"
 
+[[mobile.android.permissions]]
+name = "android.permission.POST_NOTIFICATIONS"
+
+# iOS permissions
 [[mobile.ios.permissions]]
 name = "INTERNET"
 reason = "Download OpenTTD versions and resources"
+
+[[mobile.ios.permissions]]
+name = "FILE_ACCESS"
+reason = "Access stored OpenTTD files and configurations"

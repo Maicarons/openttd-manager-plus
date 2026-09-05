@@ -13,7 +13,6 @@ web = []
 [dependencies]
 # Dioxus Native — Blitz/WGPU renderer (no WebView)
 dioxus-native = { version = "0.7", features = ["prelude", "default"] }
-dioxus-router = "0.7"
 dioxus-logger = "0.7"
 manganis = "0.7"
 serde = { workspace = true, features = ["derive"] }
@@ -21,6 +20,8 @@ serde_json = "1"
 tokio = { version = "1", features = ["full"] }
 anyhow = "1"
 log = "0.4"
+chrono = { workspace = true }
+uuid = { workspace = true }
 otmp-core-manager = { path = "../../core/manager" }
 otmp-core-downloader = { path = "../../core/downloader" }
 otmp-core-config = { path = "../../core/config" }
