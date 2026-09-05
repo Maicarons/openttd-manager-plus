@@ -6,6 +6,7 @@
 pub mod config_file;
 pub mod instance;
 pub mod profile;
+pub mod save;
 
 /// Result type alias for the config crate
 pub type Result<T> = std::result::Result<T, Error>;
@@ -44,4 +45,8 @@ pub enum Error {
     /// Invalid configuration data
     #[error("Invalid configuration: {0}")]
     InvalidConfig(String),
+
+    /// The specified save was not found
+    #[error("Save not found: {0}")]
+    SaveNotFound(String),
 }
