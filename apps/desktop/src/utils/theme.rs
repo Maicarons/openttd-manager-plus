@@ -28,6 +28,7 @@ impl ThemeManager {
     }
 
     /// Get CSS variables string for the current theme
+    #[allow(dead_code)]
     pub fn css_vars(&self) -> &'static str {
         match *self.theme.read() {
             Theme::Light => "",

@@ -1,4 +1,4 @@
-//! Application state management using Dioxus signals.
+﻿//! Application state management using Dioxus signals.
 
 use dioxus_native::prelude::*;
 use otmp_core_manager::source::official::OfficialFetcher;
@@ -13,12 +13,15 @@ use otmp_core_config::save::{SaveInfo, SaveManager};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[allow(dead_code)]
 pub enum Priority { #[default] Normal, Low, High, Critical }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[allow(dead_code)]
 pub enum TaskStatus { Queued, Downloading, Paused, Completed, Failed, Cancelled }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct DownloadTask {
     pub id: String, pub name: String, pub url: String, pub destination: PathBuf,
     pub total_bytes: u64, pub downloaded_bytes: u64, pub status: TaskStatus,
@@ -26,6 +29,7 @@ pub struct DownloadTask {
 }
 
 #[derive(Debug, Clone, Copy, Default)]
+#[allow(dead_code)]
 pub struct QueueStats { pub active: usize, pub queued: usize, pub completed: usize, pub failed: usize, pub total_bytes: u64, pub downloaded_bytes: u64 }
 
 #[derive(Clone)]
@@ -62,6 +66,7 @@ impl AppState {
     }
 
     /// Fetch versions from all configured sources.
+    #[allow(dead_code)]
     pub async fn fetch_versions(&self) {
         let mut loading = self.loading;
         let mut error = self.error;
@@ -102,6 +107,7 @@ impl AppState {
         loading.set(false);
     }
 
+    #[allow(dead_code)]
     pub fn apply_filter(&mut self) {
         let filter = self.active_filter.read().clone();
         let v = self.versions.read().clone();
@@ -115,11 +121,13 @@ impl AppState {
         self.filtered_versions.set(filtered);
     }
 
+    #[allow(dead_code)]
     pub fn set_filter(&mut self, filter: &str) {
         self.active_filter.set(filter.to_string());
         self.apply_filter();
     }
 
+    #[allow(dead_code)]
     pub fn load_instances(&mut self) {
         let mut instances = self.instances;
         let data_dir = self.data_dir.read().clone();
@@ -128,6 +136,7 @@ impl AppState {
         instances.set(manager.list().to_vec());
     }
 
+    #[allow(dead_code)]
     pub fn load_profiles(&mut self) {
         let mut profiles = self.profiles;
         let data_dir = self.data_dir.read().clone();
@@ -144,6 +153,7 @@ impl AppState {
         saves.set(manager.list().to_vec());
     }
 
+    #[allow(dead_code)]
     pub fn refresh_downloads(&mut self) {
         let queue = self.download_queue.read().clone();
         let mut stats = QueueStats::default();
@@ -161,3 +171,6 @@ impl AppState {
         self.download_stats.set(stats);
     }
 }
+
+
+

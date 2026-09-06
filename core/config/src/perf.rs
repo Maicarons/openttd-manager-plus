@@ -2,7 +2,7 @@
 //! Provides lazy initialization, parallel loading, and cache warming.
 
 use std::path::PathBuf;
-use std::time::{Duration, Instant};
+use std::time::Instant;
 use log::info;
 
 /// Performance metrics for monitoring

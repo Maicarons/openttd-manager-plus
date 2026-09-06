@@ -62,7 +62,6 @@ pub struct ServerFilter {
 }
 
 /// Master server URLs for OpenTTD
-const MASTER_SERVER_URL: &str = "https://master.openttd.org/";
 const SERVER_LIST_URL: &str = "https://master.openttd.org/servers";
 
 /// Server list fetcher

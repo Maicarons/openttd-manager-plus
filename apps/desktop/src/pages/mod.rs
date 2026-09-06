@@ -27,18 +27,3 @@ pub enum Page {
     Saves,
     Settings,
 }
-
-impl Page {
-    /// Get the display title for this page
-    pub fn title(&self) -> &'static str {
-        match self {
-            Page::Home => "Home",
-            Page::Versions => "Version Management",
-            Page::Downloads => "Download Manager",
-            Page::Configs => "Configuration",
-            Page::Mods => "Mod Management",
-            Page::Saves => "Save Management",
-            Page::Settings => "Settings",
-        }
-    }
-}
