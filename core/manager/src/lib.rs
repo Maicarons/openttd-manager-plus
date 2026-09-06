@@ -10,7 +10,10 @@
 //! - [`cache`] — Local manifest caching ([`ManifestCache`])
 
 pub mod cache;
+pub mod conflict;
 pub mod import;
+pub mod plugin;
+pub mod server;
 pub mod source;
 pub mod version;
 
