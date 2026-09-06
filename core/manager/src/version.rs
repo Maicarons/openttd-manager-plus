@@ -117,7 +117,7 @@ pub struct VersionInfo {
 }
 
 /// Types of mods available on BaNaNaS.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ModType {
     /// NewGRF graphics / gameplay mods.
     NewGRF,
