@@ -13,7 +13,6 @@ fn main() {
     dioxus_logger::init(dioxus_logger::tracing::Level::INFO).expect("Failed to initialize logger");
     log::info!("Starting OpenTTD Manager Plus Desktop (Native Renderer)");
 
-    // Set window title using Dioxus Native Config
     use dioxus_native::Config;
     use dioxus_native::WindowAttributes;
     let cfg = Config::new()
